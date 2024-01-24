@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "vspliter"
+version = "0.1.0"
+description = ""
+authors = ["grahlnn <grahlnn@skiff.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+mdx23 = { git = "https://github.com/GrahLnn/MVSEP-MDX23-Colab_v2.git" }
+transformers = "^4.37.0"
+accelerate = "^0.26.1"
+datasets = { extras = ["audio"], version = "^2.16.1" }
+spacy = "^3.7.2"
+torch = { version = "^2.1.2", source = "pytorch" }
+torchvision = { version = "^0.16.2", source = "pytorch" }
+torchaudio = { version = "^2.1.2", source = "pytorch" }
+marimo = "^0.1.81"
+toml = "^0.10.2"
+pydub = "^0.25.1"
+
+[[tool.poetry.source]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu118"
+priority = "explicit"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
