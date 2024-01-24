@@ -1,6 +1,6 @@
 # vspliter
 
-vspliter是为[GPT-SoVITS](https://github.com/RVC-Boss/GPT-SoVITS)训练准备音频数据的工具
+vspliter是为[GPT-SoVITS](https://github.com/RVC-Boss/GPT-SoVITS)准备音频-文本对的工具
 
 # Feature
 
