@@ -11,14 +11,20 @@ vspliter是为GPT-SoVITS训练准备音频数据的工具
 
 # How to use
 
-clone本项目
-
 本项目使用poetry环境，确保你安装了[poetry](https://python-poetry.org/docs/)
 
 ```
+# 克隆项目
+git clone https://github.com/GrahLnn/vspliter.git
+
+# 进入项目目录
 cd vspliter
+
+# 安装和激活 poetry 环境
 poetry shell
 poetry install
+
+# 启动marimo notebook
 marimo edit split.py
 ```
 
