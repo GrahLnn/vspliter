@@ -20,7 +20,7 @@ git clone https://github.com/GrahLnn/vspliter.git
 # 进入项目目录
 cd vspliter
 
-# 安装和激活 poetry 环境
+# 激活 poetry 环境
 poetry shell
 poetry install
 
