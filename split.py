@@ -4,7 +4,7 @@ __generated_with = "0.1.81"
 app = marimo.App()
 
 
-@app.cell
+@app.cell(hide_code=True)
 def __(mo):
     # upload_button = mo.ui.file(kind="button")
     audiopath = mo.ui.text(placeholder="path/your/audio...")
@@ -177,7 +177,7 @@ def __():
     import librosa
     import numpy as np
     from mdx23.inference import start
-
+    import shutil
     # from voicefixer import VoiceFixer
     from pathlib import Path
     from pydub import AudioSegment
@@ -195,6 +195,7 @@ def __():
         os,
         pipeline,
         sf,
+        shutil,
         spacy,
         start,
         subprocess,
@@ -212,15 +213,23 @@ def __(sys):
 
 @app.cell
 def __(
+    ThreadPoolExecutor,
+    as_completed,
+    audio_path,
     audiopath,
+    extract_vocal,
     formats_choose,
     lang_choose,
     mo,
     modal_choose,
     os,
+    processing_segment,
     save_path,
     savefolder,
+    shutil,
     speakername,
+    spliter,
+    transcribe_with_whisper,
     vram_choose,
 ):
     get_warn_elem, set_warn_elem = mo.state("")
@@ -247,31 +256,36 @@ def __(
             raise ValueError(f"{invaild_value}")
 
         # check file exiests!
+        if not os.path.exists(audio_path):
+            raise ValueError(f"File [{audio_path}] does not exist!!")
 
-        # with mo.status.spinner(title="clean vocal...") as _spinner:
-        #     extract_vocal()
-        #     _spinner.update(title="transcribe with whisper...")
-        #     transcribe_with_whisper()
-        #     _spinner.update(title="split segments...")
-        #     audio, new_sentences = spliter()
-        # with ThreadPoolExecutor() as executor:
-        #     futures = [
-        #         executor.submit(processing_segment, audio, idx, segment)
-        #         for idx, segment in enumerate(new_sentences)
-        #     ]
-        #     progress_bar = mo.status.progress_bar(range(len(futures)))
-        #     results = [
-        #         future.result()
-        #         for _, future in zip(progress_bar, as_completed(futures))
-        #     ]
+        with mo.status.spinner(title="clean vocal...") as _spinner:
+            extract_vocal()
+            _spinner.update(title="transcribe with whisper...")
+            transcribe_with_whisper()
+            _spinner.update(title="split segments...")
+            audio, new_sentences = spliter()
+        with ThreadPoolExecutor() as executor:
+            futures = [
+                executor.submit(processing_segment, audio, idx, segment)
+                for idx, segment in enumerate(new_sentences)
+            ]
+            progress_bar = mo.status.progress_bar(range(len(futures)))
+            results = [
+                future.result()
+                for _, future in zip(progress_bar, as_completed(futures))
+            ]
         if not os.path.isabs(save_path):
             current_directory = os.getcwd()
             full_path = os.path.join(current_directory, save_path, "segments.list")
+            data_folder = os.path.join(current_directory, save_path, "final_segments")
         else:
             full_path = os.path.join(save_path, "segments.list")
-        
+            data_folder = os.path.join(save_path, "final_segments")
+        shutil.rmtree(f"{save_path}/clean_vocal")
+        shutil.rmtree(f"{save_path}/whisper_segments")
         done_msg = mo.md(
-            f"## Your data is ready! \n\ncopy `{full_path}` to use. \n\nRun cell above for another audio."
+            f"## Your data is ready! \n\nAnnotation path: `{full_path}`\n\nData folder: `{data_folder}`\n\nRun cell above for another audio."
         )
         set_done_msg(done_msg)
         # progress_bar = mo.status.progress_bar(range(len(new_sentences)))
@@ -419,11 +433,25 @@ def __(
         new_sentences = []
 
         for sentence in sentences:
-            sent = sentence.split()
-            # print(sent)
-            idx = sent.index(sent[-1])
-            sent_chunk = [new_chunks[idx] for idx in range(idx + 1)]
-            new_chunks = new_chunks[idx + 1 :]
+            if lang_choose.value == "en":
+                sent = sentence.split()
+                # print(sent)
+                idx = sent.index(sent[-1])
+                sent_chunk = [new_chunks[idx] for idx in range(idx + 1)]
+                new_chunks = new_chunks[idx + 1 :]
+            elif lang_choose.value == "ja":
+                sent_chunk = []
+                sentence_len = len(sentence)
+                for idx, chunk in enumerate(new_chunks):
+                    if chunk["text"] in sentence and sentence_len > 0:
+                        sent_chunk.append(chunk)
+                        sentence_len -= len(chunk["text"])
+                    elif sentence_len != 0:
+                        sent_chunk = []
+                        sentence_len = len(sentence)
+                    else:
+                        new_chunks = new_chunks[idx:]
+                        break
             # print(idx, sent_chunk)
             new_sentences.append(
                 {
