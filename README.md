@@ -20,9 +20,11 @@ git clone https://github.com/GrahLnn/vspliter.git
 # 进入项目目录
 cd vspliter
 
-# 激活并初始化 poetry 环境
-poetry shell
+# 初始化 poetry 环境
 poetry install
+
+# 激活环境
+poetry shell
 
 # 启动marimo notebook
 marimo edit split.py
