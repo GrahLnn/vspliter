@@ -31,7 +31,7 @@ marimo edit split.py
 # Roadmap
 
 - [ ] 日语的whisper识别有点问题，我的实验里它漏了将近40秒的内容
-- [ ] 支持distil-whisper/large-v2，（当前word-level的时间戳不可用）
+- [ ] 支持distil-whisper/large-v2（当前它的word-level时间戳不可用）
 - [ ] 让音频的音量更加均匀
 - [ ] 加入resemble-enhance进行降噪和增强
-- [ ] 更多的配置项（用来判断是否能对模型进行加速的操作）
+- [ ] 更多的配置项
