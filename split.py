@@ -112,7 +112,7 @@ def __(main, mo, set_done_msg, set_warn_elem):
     )
 
     mo.hstack([start_split], justify="center")
-    return start_split,
+    return (start_split,)
 
 
 @app.cell(hide_code=True)
@@ -122,7 +122,7 @@ def __(get_done_msg):
         done_msg = get_done_msg()
 
     done_msg
-    return done_msg,
+    return (done_msg,)
 
 
 @app.cell(hide_code=True)
@@ -138,7 +138,7 @@ def __(get_warn_elem, mo):
     else:
         warn_elem = ""
     mo.hstack([warn_elem], "center")
-    return warn_elem,
+    return (warn_elem,)
 
 
 @app.cell(hide_code=True)
@@ -155,7 +155,7 @@ def __(mo, torch):
         """
         ).callout(kind="warn")
     show_notif
-    return show_notif,
+    return (show_notif,)
 
 
 @app.cell
@@ -178,12 +178,14 @@ def __():
     import numpy as np
     from mdx23.inference import start
     import shutil
+
     # from voicefixer import VoiceFixer
     from pathlib import Path
     from pydub import AudioSegment
     from concurrent.futures import ThreadPoolExecutor, as_completed
     import soundfile as sf
     from transformers import pipeline
+
     return (
         AudioSegment,
         Path,
@@ -208,7 +210,7 @@ def __():
 @app.cell
 def __(sys):
     python_executable = sys.executable
-    return python_executable,
+    return (python_executable,)
 
 
 @app.cell
@@ -234,6 +236,7 @@ def __(
 ):
     get_warn_elem, set_warn_elem = mo.state("")
     get_done_msg, set_done_msg = mo.state("")
+
     def main():
         invaild_value = []
         if not audiopath.value:
@@ -291,6 +294,7 @@ def __(
         # progress_bar = mo.status.progress_bar(range(len(new_sentences)))
         # for _, (idx, segment) in zip(progress_bar, enumerate(new_sentences)):
         #     processing_segment(audio, idx, segment)
+
     return get_done_msg, get_warn_elem, main, set_done_msg, set_warn_elem
 
 
@@ -329,7 +333,8 @@ def __(audio_path, os, save_path, start, vram_choose):
         #     cuda=True,
         #     mode=0,
         # )
-    return extract_vocal,
+
+    return (extract_vocal,)
 
 
 @app.cell
@@ -352,11 +357,10 @@ def __(audio_path, modal_choose, pipeline, save_path, toml, torch):
             generate_kwargs={"task": "transcribe", "language": None},
         )
         outputs["text"] = outputs["text"].strip()
-        with open(
-            f"{save_path}/transcribe_outputs.toml", "w", encoding="utf-8"
-        ) as f:
+        with open(f"{save_path}/transcribe_outputs.toml", "w", encoding="utf-8") as f:
             toml.dump(outputs, f)
-    return transcribe_with_whisper,
+
+    return (transcribe_with_whisper,)
 
 
 @app.cell
@@ -439,7 +443,7 @@ def __(
                 idx = sent.index(sent[-1])
                 sent_chunk = [new_chunks[idx] for idx in range(idx + 1)]
                 new_chunks = new_chunks[idx + 1 :]
-            elif lang_choose.value == "ja":
+            elif lang_choose.value == "ja" or lang_choose.value == "zh":
                 sent_chunk = []
                 sentence_len = len(sentence)
                 for idx, chunk in enumerate(new_chunks):
@@ -467,7 +471,8 @@ def __(
         )
 
         return audio, new_sentences
-    return spliter,
+
+    return (spliter,)
 
 
 @app.cell
@@ -499,9 +504,7 @@ def __(
         if formats_choose.value == "GPT-SoVITS":
             entry = f"{final_save_path}/segment_{idx}.wav|{speakername.value}|{lang_choose.value}|{segment['text']}\n"
         # audio_byte_stream = io.BytesIO()
-        segment_audio.export(
-            f"{whisper_seg_save_path}/segment_{idx}.wav", format="wav"
-        )
+        segment_audio.export(f"{whisper_seg_save_path}/segment_{idx}.wav", format="wav")
         if start_ms - padding_duration_ms < 0:
             ps = start_ms
         temp_audio = audio[start_ms - ps : end_ms + pe]
@@ -509,9 +512,7 @@ def __(
             f"{whisper_seg_save_path}/segment_len_{idx}.wav", format="wav"
         )
 
-        ay, sr = librosa.load(
-            f"{whisper_seg_save_path}/segment_{idx}.wav", sr=None
-        )
+        ay, sr = librosa.load(f"{whisper_seg_save_path}/segment_{idx}.wav", sr=None)
         if len(ay) == 0:
             print(f"segment_{idx} is empty")
             return
@@ -657,9 +658,7 @@ def __(
                             break
                 else:
                     if n[right_low] == n[right_low + 1]:
-                        for idxz, elem in enumerate(
-                            n[right_low:], start=right_low
-                        ):
+                        for idxz, elem in enumerate(n[right_low:], start=right_low):
                             if elem != n[right_low]:
                                 right_low = idxz
                                 break
@@ -684,9 +683,7 @@ def __(
         cut_start = min_value_index
 
         if new_list[cut_start + 1] == 0:
-            for idxz, elem in enumerate(
-                new_list[cut_start + 1 :], start=cut_start + 1
-            ):
+            for idxz, elem in enumerate(new_list[cut_start + 1 :], start=cut_start + 1):
                 if elem != 0:
                     cut_start = idxz
                     break
@@ -741,12 +738,7 @@ def __(
                 increase_count = 0
                 # last_increase_value = min_value
                 # print(min_value_index, min_value)
-            elif (
-                n[i] > min_value
-                and n[i] != 0
-                and n[i] < 0.12
-                and new_list[ix] < 0.02
-            ):
+            elif n[i] > min_value and n[i] != 0 and n[i] < 0.12 and new_list[ix] < 0.02:
                 increase_count += 1
                 if increase_count > 1:
                     break
@@ -767,9 +759,7 @@ def __(
                         cut_start = idxz
                         break
             else:
-                for idxz, elem in reversed(
-                    list(enumerate(new_list[: ay_start - 1]))
-                ):
+                for idxz, elem in reversed(list(enumerate(new_list[: ay_start - 1]))):
                     if elem != value:
                         cut_start = idxz
                         break
@@ -795,7 +785,8 @@ def __(
         sf.write(f"{final_save_path}/segment_{idx}.wav", final_audio, tsr)
         with open(f"{save_path}/segments.list", "a", encoding="utf-8") as file:
             file.write(entry)
-    return processing_segment,
+
+    return (processing_segment,)
 
 
 if __name__ == "__main__":
