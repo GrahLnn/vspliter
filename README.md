@@ -6,7 +6,7 @@ vspliter是为[GPT-SoVITS](https://github.com/RVC-Boss/GPT-SoVITS)准备音频-�
 
 - 利用whisper模型进行文本转录（openai/whisper-large-v3）
 - 通过自然语言分句来进行音频分割
-- 每个句子有更好的开始和结束
+- 每个句子有更自然的开始和结束
 - 用MDX23模型来分离人声和背景音
 
 # How to use
