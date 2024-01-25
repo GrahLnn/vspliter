@@ -37,4 +37,4 @@ marimo edit split.py
 - [ ] 让音频的音量更加均匀
 - [ ] 加入resemble-enhance进行降噪和增强
 - [ ] 更多的配置项
-- [ ] 使用GPT模型进行自然语言分句
+- [ ] 使用LLM进行自然语言分句
